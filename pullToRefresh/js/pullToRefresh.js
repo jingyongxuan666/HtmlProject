@@ -1,3 +1,4 @@
+var noData;
 var myRefresher = {
 	/*
 	 * pullUp(myswiper) 上拉加载 同步请求
@@ -31,6 +32,7 @@ var myRefresher = {
 			},
 			onTouchStart: function() {
 				pullLength = 0;
+				noData = false;
 			},
 			onTouchEnd: function() {
 				if(pullLength > 100) {
@@ -50,7 +52,7 @@ var myRefresher = {
 		}
 	},
 	loadAll:function(){
-		$("#pullOn").text("已加载全部数据");
+		noData = true;
 	}
 }
 
@@ -83,5 +85,8 @@ function pullUp(view,params) {
 		params.pullUp(view);
 		$(params.target).children().children(".swiper-wrapper").append('<div id="pullOn" style="margin-top: 10px;text-align: center;font:14px \'microsoft yahei\';height: 20px;">上拉加载</div>');
 		view.params.onlyExternal = false;
+		if(noData){
+			$("#pullOn").text("已加载全部数据");
+		}
 	}, 1000);
 }
