@@ -1,0 +1,58 @@
+<!doctype html>
+<html>
+
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+		<!--<link href="css/idangerous.swiper.css"  rel="stylesheet"/>-->
+		<style>
+			body {
+				padding: 0;
+				margin: 0;
+			}
+			
+			.swiper-slide {
+				height: 50px;
+				width: 100%;
+				line-height: 50px;
+			}
+			
+			.title {
+				text-align: center;
+				border: 1px solid black;
+			}
+		</style>
+	</head>
+
+	<body>
+		<script src="js/jquery-3.3.1.min.js"></script>
+		<script src="js/idangerous.swiper.min.js"></script>
+		<script src="js/pullToRefresh.js"></script>
+		<div class="wrapper"></div>
+		<script>
+			var count = 5;
+			var newCount = 0;
+			var a = [];
+
+			myRefresher.init({
+				target: ".wrapper",
+				pullDown: function(mySwiper) {
+					for(var i = 0; i < count; i++) {
+						a[i] = '<div class="title">' + i + '<div>';
+						mySwiper.appendSlide(a[i]);
+					}
+				},
+				pullUp: function(mySwiper) {
+					for(var i = 0; i < count; i++) {
+						a[i] = '<div class="title">New ' + eval(newCount+1) + '<div>';
+						mySwiper.appendSlide(a[i]);
+						newCount ++;
+					}
+				},
+				loadCount: count //每次上拉加载个数，用于判断是否在底部显示上拉加载
+			});
+		</script>
+	</body>
+
+</html>
