@@ -50,7 +50,10 @@
 						newCount ++;
 					}
 				},
-				loadCount: count //每次上拉加载个数，用于判断是否在底部显示上拉加载
+				loadCount: count, //每次上拉加载个数，用于判断是否在底部显示上拉加载
+				onItemClick:function(s){
+					console.log(s.children)
+				}
 			});
 		</script>
 	</body>
