@@ -1,4 +1,8 @@
 var noData;
+//创建上拉加载的div
+var pullUp = document.createElement("div");
+pullUp.id = "pullUp";
+pullUp.style.cssText = "margin-top: 10px;text-align: center;font:14px \'microsoft yahei\';height: 20px;";
 var myRefresher = {
 	/*
 	 * pullUp(myswiper) 上拉加载 同步请求
@@ -11,12 +15,28 @@ var myRefresher = {
 		var pullLength = 0;
 		var pullOn;
 		var isShowPullOn;
-		$(params.target).append('<div id="myCon" class="swiper-container" style="height: 100%;"></div>');
-		$(params.target).children().append('<div class="swiper-wrapper"></div>');
-		$("html").css("height", "100%");
-		$("body").css("height", "100%");
-		$(params.target).css("height", "92%");
-		$(params.target).children().children(".swiper-wrapper").prepend('<div id="pullDown" style="margin-top: -30px;text-align: center;font:14px \'microsoft yahei\';height:30px;line-height:45px;">下拉刷新</div>');
+		var target = document.querySelector(params.target);
+
+		//创建下拉刷新容器
+		var refreshWrapper = document.createElement("div");
+		refreshWrapper.className = "swiper-container";
+		refreshWrapper.id = "myCon";
+		refreshWrapper.style.height = "100%";
+		target.appendChild(refreshWrapper);
+
+		var swiperWrapper = document.createElement("div");
+		swiperWrapper.className = "swiper-wrapper";
+		refreshWrapper.appendChild(swiperWrapper);
+		//指定html和body高度
+		document.documentElement.style.height = "100%";
+		document.body.style.height = "100%";
+		//指定容器高度
+		target.style.height = "92%";
+		//头部添加下拉刷新
+		var pullDown = document.createElement("div");
+		pullDown.id = "pullDown";
+		pullDown.style.cssText = "margin-top: -30px;text-align: center;font:14px \'microsoft yahei\';height:30px;line-height:30px;"
+		swiperWrapper.appendChild(pullDown);
 		//下拉刷新
 		var mySwiper1 = new Swiper("#myCon", {
 			mode: "vertical",
@@ -24,7 +44,7 @@ var myRefresher = {
 			watchActiveIndex: true,
 			onResistanceBefore: function(s, pos) {
 				pullLength = pos;
-				$("#pullDown").text("下拉刷新");
+				pullDown.innerText = "下拉刷新";
 				pullOn = false;
 			},
 			onResistanceAfter: function(s, pos) {
@@ -37,69 +57,70 @@ var myRefresher = {
 			},
 			onTouchEnd: function() {
 				if(pullLength > 100) {
-					if(pullOn){
+					if(pullOn) {
 						//上拉加载
-						pullUp(mySwiper1,params);
-					}else{
+						doPullUp(mySwiper1, params);
+					} else {
 						//下拉刷新
-						pullDown(mySwiper1,params);
+						doPullDown(mySwiper1, params);
 					}
 				}
 			},
-			onSlideClick:function(s){
+			onSlideClick: function() {
 				params.onItemClick(mySwiper1.slides[mySwiper1.clickedSlideIndex]);
 			}
 		});
 		params.pullDown(mySwiper1);
-		if($(params.target).children().children().children(".swiper-slide").length >= params.loadCount) {
-			$(params.target).children().children(".swiper-wrapper").append('<div id="pullOn" style="margin-top: 10px;text-align: center;font:14px \'microsoft yahei\';height: 20px;">上拉加载</div>');
-		}
+		addPullUp(params);
 	},
-	loadAll:function(){
+	loadAll: function() {
 		noData = true;
 	}
 }
 
-function pullDown(view,params) {
+function doPullDown(view, params) {
 	// Hold Swiper in required position
 	view.setWrapperTranslate(0, 30, 0)
 
 	//Dissalow futher interactions
 	view.params.onlyExternal = true;
-	$("#pullDown").text("正在刷新");
+	document.getElementById("pullDown").innerText = "正在刷新";
 	setTimeout(function() {
-		$("#pullOn").remove();
+		document.querySelector(".swiper-container >.swiper-wrapper").removeChild(document.getElementById("pullUp"));
 		view.removeAllSlides();
 		params.pullDown(view);
+		//数据加载完成添加上拉加载的div
+		addPullUp(params);
 		
-		if($(params.target).children().children().children(".swiper-slide").length >= params.loadCount) {
-			$(params.target).children().children(".swiper-wrapper").append('<div id="pullOn" style="margin-top: 10px;text-align: center;font:14px \'microsoft yahei\';height: 20px;">上拉加载</div>');
-		}
-		$("#pullDown").text("刷新成功");
-		setTimeout(function(){
+		document.getElementById("pullDown").innerText = "刷新成功";
+		setTimeout(function() {
 			view.setWrapperTranslate(0, 0, 0);
 			view.params.onlyExternal = false;
-		},500);
-		if(noData){
-			$("#pullOn").remove();
+		}, 500);
+		if(noData) {
+			document.querySelector(".swiper-container >.swiper-wrapper").removeChild(document.getElementById("pullUp"));
 		}
 	}, 1000);
 }
 
-function pullUp(view,params) {
+function doPullUp(view, params) {
 	//Dissalow futher interactions
-	$("#pullOn").text("加载中")
+	document.getElementById("pullUp").innerText = "加载中";
 	view.params.onlyExternal = true;
 	setTimeout(function() {
-		$("#pullOn").remove();
-		
+		document.querySelector(".swiper-container >.swiper-wrapper").removeChild(document.getElementById("pullUp"));
 		params.pullUp(view);
-		if($(params.target).children().children().children(".swiper-slide").length >= params.loadCount) {
-			$(params.target).children().children(".swiper-wrapper").append('<div id="pullOn" style="margin-top: 10px;text-align: center;font:14px \'microsoft yahei\';height: 20px;">上拉加载</div>');
-		}
+		addPullUp(params);
 		view.params.onlyExternal = false;
-		if(noData){
-			$("#pullOn").text("已加载全部数据");
+		if(noData) {
+			document.getElementById("pullUp").innerText = "已加载全部数据";
 		}
 	}, 1000);
+}
+
+function addPullUp(params) {
+	if(document.querySelectorAll(".swiper-wrapper > .swiper-slide").length >= params.loadCount && params.loadCount != -1) {
+		document.querySelector(".swiper-container >.swiper-wrapper").appendChild(pullUp);
+		document.getElementById("pullUp").innerText = "上拉加载";
+	}
 }
