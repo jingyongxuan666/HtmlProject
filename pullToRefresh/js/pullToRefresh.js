@@ -67,7 +67,8 @@ var myRefresher = {
 				if(pullLength > 100) {
 					if(pullOn) {
 						//上拉加载
-						doPullUp(mySwiper1, params);
+						if(params.loadCount != -1)
+							doPullUp(mySwiper1, params);
 					} else {
 						//下拉刷新
 						doPullDown(mySwiper1, params);
@@ -94,7 +95,8 @@ function doPullDown(view, params) {
 	view.params.onlyExternal = true;
 	document.getElementById("pullDown").innerText = "正在刷新";
 	setTimeout(function() {
-		document.querySelector(".swiper-container >.swiper-wrapper").removeChild(document.getElementById("pullUp"));
+		if(params.loadCount != -1)
+			document.querySelector(".swiper-container >.swiper-wrapper").removeChild(document.getElementById("pullUp"));
 		view.removeAllSlides();
 		params.pullDown(view);
 		//数据加载完成添加上拉加载的div
@@ -106,7 +108,8 @@ function doPullDown(view, params) {
 			view.params.onlyExternal = false;
 		}, 500);
 		if(noData) {
-			document.querySelector(".swiper-container >.swiper-wrapper").removeChild(document.getElementById("pullUp"));
+			if(params.loadCount != -1) 
+				document.querySelector(".swiper-container >.swiper-wrapper").removeChild(document.getElementById("pullUp"));
 		}
 	}, 1000);
 }
