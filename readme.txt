@@ -1,1 +1,1 @@
-this project is about HTML
+This project is about HTML
