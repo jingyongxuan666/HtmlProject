@@ -10,20 +10,28 @@ var myRefresher = {
 	 * target  容器对象
 	 * loadCount 每页加载数量
 	 * onItemClick(index) 子项目点击方法，参数为索引
+	 * itemSpacing item间隔，单位px
 	 */
 	init: function(params) {
 		var pullLength = 0;
 		var pullOn;
 		var isShowPullOn;
 		var target = document.querySelector(params.target);
-
+		
+		//设置item间隔
+		var itemStyle = document.createElement("style");
+		itemStyle.type = "text/css";
+		itemStyle.appendChild(document.createTextNode(".swiper-slide {padding-top:"+ (params.itemSpacing==null?0:params.itemSpacing) +"px}"));
+		var head = document.getElementsByTagName("head")[0];
+		head.appendChild(itemStyle);
+		
 		//创建下拉刷新容器
 		var refreshWrapper = document.createElement("div");
 		refreshWrapper.className = "swiper-container";
 		refreshWrapper.id = "myCon";
 		refreshWrapper.style.height = "100%";
 		target.appendChild(refreshWrapper);
-
+		
 		var swiperWrapper = document.createElement("div");
 		swiperWrapper.className = "swiper-wrapper";
 		refreshWrapper.appendChild(swiperWrapper);
