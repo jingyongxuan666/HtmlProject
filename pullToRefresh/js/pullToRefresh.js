@@ -17,21 +17,23 @@ var myRefresher = {
 		var pullOn;
 		var isShowPullOn;
 		var target = document.querySelector(params.target);
-		
+		//loadCount默认为-1，无上拉加载
+		params.loadCount = params.loadCount == null ? -1 : params.loadCount;
+
 		//设置item间隔
 		var itemStyle = document.createElement("style");
 		itemStyle.type = "text/css";
-		itemStyle.appendChild(document.createTextNode(".swiper-slide {padding-top:"+ (params.itemSpacing==null?0:params.itemSpacing) +"px}"));
+		itemStyle.appendChild(document.createTextNode(".swiper-slide {padding-top:" + (params.itemSpacing == null ? 0 : params.itemSpacing) + "px}"));
 		var head = document.getElementsByTagName("head")[0];
 		head.appendChild(itemStyle);
-		
+
 		//创建下拉刷新容器
 		var refreshWrapper = document.createElement("div");
 		refreshWrapper.className = "swiper-container";
 		refreshWrapper.id = "myCon";
 		refreshWrapper.style.height = "100%";
 		target.appendChild(refreshWrapper);
-		
+
 		var swiperWrapper = document.createElement("div");
 		swiperWrapper.className = "swiper-wrapper";
 		refreshWrapper.appendChild(swiperWrapper);
@@ -73,6 +75,8 @@ var myRefresher = {
 						//下拉刷新
 						doPullDown(mySwiper1, params);
 					}
+					//判断如果没有数据，则提示
+					checkNoData(mySwiper1);
 				}
 			},
 			onSlideClick: function() {
@@ -81,6 +85,7 @@ var myRefresher = {
 		});
 		params.pullDown(mySwiper1);
 		addPullUp(params);
+		checkNoData(mySwiper1);
 	},
 	loadAll: function() {
 		noData = true;
@@ -101,15 +106,16 @@ function doPullDown(view, params) {
 		params.pullDown(view);
 		//数据加载完成添加上拉加载的div
 		addPullUp(params);
-		
+
 		document.getElementById("pullDown").innerText = "刷新成功";
 		setTimeout(function() {
 			view.setWrapperTranslate(0, 0, 0);
 			view.params.onlyExternal = false;
 		}, 500);
 		if(noData) {
-			if(params.loadCount != -1) 
+			if(params.loadCount != -1)
 				document.querySelector(".swiper-container >.swiper-wrapper").removeChild(document.getElementById("pullUp"));
+
 		}
 	}, 1000);
 }
@@ -133,5 +139,18 @@ function addPullUp(params) {
 	if(document.querySelectorAll(".swiper-wrapper > .swiper-slide").length >= params.loadCount && params.loadCount != -1) {
 		document.querySelector(".swiper-container >.swiper-wrapper").appendChild(pullUp);
 		document.getElementById("pullUp").innerText = "上拉加载";
+	}
+}
+
+function checkNoData(mySwiper1) {
+	if(document.getElementsByClassName("swiper-slide").length == 0) {
+		if(document.getElementById("noDataDiv")){
+			document.querySelector(".swiper-container .swiper-wrapper").removeChild(document.getElementById("noDataDiv"));
+		}
+		var noDataDiv = document.createElement("div");
+		noDataDiv.id = "noDataDiv";
+		noDataDiv.style.cssText = "height:200px;line-height:200px;text-align:center;font-family: microsoft yahei;";
+		noDataDiv.innerText = "暂无数据";
+		mySwiper1.appendSlide(noDataDiv);
 	}
 }
