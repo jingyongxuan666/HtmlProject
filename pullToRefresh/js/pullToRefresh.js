@@ -117,7 +117,6 @@ function doPullDown(view, params) {
 		if(noData) {
 			if(params.loadCount != -1)
 				document.querySelector(".swiper-container >.swiper-wrapper").removeChild(document.getElementById("pullUp"));
-
 		}
 	}, 1000);
 }
@@ -148,16 +147,15 @@ function addPullUp(params) {
  * 判断有列表有无item，没有则显示暂无数据，有则移除之
  */
 function checkNoData(mySwiper1) {
+	//有暂无数据的div则移除
+	if(document.getElementById("noDataDiv")) {
+		document.querySelector(".swiper-container .swiper-wrapper").removeChild(document.getElementById("noDataDiv"));
+	}
 	if(document.getElementsByClassName("swiper-slide").length == 0) {
 		var noDataDiv = document.createElement("div");
 		noDataDiv.id = "noDataDiv";
 		noDataDiv.style.cssText = "height:200px;line-height:200px;text-align:center;font-family: microsoft yahei;";
 		noDataDiv.innerText = "暂无数据";
 		mySwiper1.appendSlide(noDataDiv);
-	} else {
-		//暂无数据的div则移除
-		if(document.getElementById("noDataDiv")) {
-			document.querySelector(".swiper-container .swiper-wrapper").removeChild(document.getElementById("noDataDiv"));
-		}
 	}
 }
