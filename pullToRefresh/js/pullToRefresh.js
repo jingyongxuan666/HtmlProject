@@ -99,7 +99,7 @@ function doPullDown(view, params) {
 	view.params.onlyExternal = true;
 	document.getElementById("pullDown").innerText = "正在刷新";
 	setTimeout(function() {
-		if(params.loadCount != -1)
+		if(params.loadCount != -1 && document.querySelector(".swiper-slide").length >= params.loadCount)
 			document.querySelector(".swiper-container >.swiper-wrapper").removeChild(document.getElementById("pullUp"));
 		view.removeAllSlides();
 
@@ -126,7 +126,8 @@ function doPullUp(view, params) {
 	document.getElementById("pullUp").innerText = "加载中";
 	view.params.onlyExternal = true;
 	setTimeout(function() {
-		document.querySelector(".swiper-container >.swiper-wrapper").removeChild(document.getElementById("pullUp"));
+		if(document.querySelector(".swiper-slide").length >= params.loadCount)
+			document.querySelector(".swiper-container >.swiper-wrapper").removeChild(document.getElementById("pullUp"));
 		params.pullUp(view);
 		addPullUp(params);
 		view.params.onlyExternal = false;
